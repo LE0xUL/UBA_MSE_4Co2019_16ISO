@@ -5,17 +5,17 @@
 	.text
 	.global SysTick_Handler
 
-	.extern	sp1
+	.extern	getNextSP
 
 	.thumb_func
 
 SysTick_Handler:
-	push	{r4-r11}
-	ldr		r0,=sp1
-	ldr		r0,[r0]
+	push	{r4-r11,lr}
 
-	msr		msp,r0		// mov sp,r0  || mov r13,r0
+	mrs		r0,msp		// Carga el argumento para la función
+	bl		getNextSP	// Llama a función getNextSP(msp)
+	msr		msp,r0		// mov sp,r0  || mov r13,r0	// R0 = Valor devuelto por getNextSP
 
-	pop		{r4-r11}
+	pop		{r4-r11,lr}
 return:
 	bx lr
