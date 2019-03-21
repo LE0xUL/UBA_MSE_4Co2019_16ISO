@@ -20,6 +20,8 @@
 
 /*==================[internal data declaration]==============================*/
 
+volatile uint32_t millis;
+
 /*==================[internal functions declaration]=========================*/
 
 /** @brief hardware initialization function
@@ -32,6 +34,7 @@ static void initHardware(void);
  */
 static uint32_t* iniStackTask( uint32_t *stack , taskFunction_t functionName , void *argFunction );
 
+static void delayMs( uint32_t timeMs );
 
 /*==================[internal data definition]===============================*/
 
@@ -57,6 +60,7 @@ static void initHardware(void)
 
 void taskVoid()
 {
+	Board_LED_Set( _EDUCIAA_LED_R_ , TRUE );
 	while( 1 )
 	{
 		__WFI();
@@ -87,21 +91,31 @@ static uint32_t* iniStackTask( uint32_t *stack , taskFunction_t functionName , v
 	return ++stack;
 }
 
+void delayMs( uint32_t timeMs )
+{
+	uint32_t timeActual = millis;
+	while( millis - timeActual < timeMs);
+}
+
 /*==================[external functions definition]==========================*/
 
 void* 		task1( void *arg )
 {
-	Board_LED_Toggle(LED);
 	while (1)
-		__WFI();
+	{
+		Board_LED_Toggle(_LED_T1_);
+		delayMs( _DELAY_T1_ );
+	}
 	return 0;
 }
 
 void* 		task2( void *arg )
 {
-	Board_LED_Toggle(LED);
 	while (1)
-		__WFI();
+	{
+		Board_LED_Toggle(_LED_T2_);
+		delayMs( _DELAY_T2_ );
+	}
 	return 0;
 }
 
@@ -139,6 +153,8 @@ int main(void)
 {
 	sp1 = iniStackTask( &stackTask1[ _STACK_SIZE_ - 1 ] , task1 , (void *)0x11223344 );
 	sp2 = iniStackTask( &stackTask2[ _STACK_SIZE_ - 1 ] , task2 , (void *)0x11223344 );
+
+	millis = 0;
 
 	initHardware();
 

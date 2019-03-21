@@ -18,11 +18,21 @@ extern "C" {
 
 /*==================[macros]=================================================*/
 
+#define _EDUCIAA_LED_R_		0
+#define _EDUCIAA_LED_G_		1
+#define _EDUCIAA_LED_B_		2
+#define _EDUCIAA_LED_1_		3
+#define _EDUCIAA_LED_2_		4
+#define _EDUCIAA_LED_3_		5
+
+
 /** delay in milliseconds */
-#define DELAY_MS 100
+#define _DELAY_T1_ 100
+#define _DELAY_T2_ 50
 
 /** led number to toggle */
-#define LED 0
+#define _LED_T1_ 	_EDUCIAA_LED_1_
+#define _LED_T2_ 	_EDUCIAA_LED_3_
 
 /*==================[typedef]================================================*/
 
