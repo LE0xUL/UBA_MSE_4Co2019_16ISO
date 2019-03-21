@@ -25,18 +25,19 @@ extern "C" {
 #define _EDUCIAA_LED_2_		4
 #define _EDUCIAA_LED_3_		5
 
-
 /** delay in milliseconds */
 #define _DELAY_T1_ 100
-#define _DELAY_T2_ 50
+#define _DELAY_T2_ 500
+#define _DELAY_T3_ 1000
 
 /** led number to toggle */
 #define _LED_T1_ 	_EDUCIAA_LED_1_
-#define _LED_T2_ 	_EDUCIAA_LED_3_
+#define _LED_T2_ 	_EDUCIAA_LED_2_
+#define _LED_T3_ 	_EDUCIAA_LED_3_
 
 /*==================[typedef]================================================*/
 
-typedef void* (*taskFunction_t)( void*);
+typedef void* (*taskFunction_t)( void*);		// Prototipo de tareas del SO
 
 
 /*==================[external data declaration]==============================*/

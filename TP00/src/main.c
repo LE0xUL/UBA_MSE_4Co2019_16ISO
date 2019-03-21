@@ -43,9 +43,11 @@ static void delayMs( uint32_t timeMs );
 
 uint32_t	stackTask1[ _STACK_SIZE_ ];
 uint32_t	stackTask2[ _STACK_SIZE_ ];
+uint32_t	stackTask3[ _STACK_SIZE_ ];
 
 uint32_t	*sp1;
 uint32_t	*sp2;
+uint32_t	*sp3;
 
 uint32_t	currentTask;
 
@@ -119,6 +121,16 @@ void* 		task2( void *arg )
 	return 0;
 }
 
+void* 		task3( void *arg )
+{
+	while (1)
+	{
+		Board_LED_Toggle(_LED_T3_);
+		delayMs( _DELAY_T3_ );
+	}
+	return 0;
+}
+
 uint32_t*	getNextSP( uint32_t *currentSP )
 {
 	uint32_t *nextSP;
@@ -137,6 +149,12 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 
 		case 2:
 			sp2 = currentSP;
+			nextSP = sp3;
+			currentTask = 3;
+		break;
+
+		case 3:
+			sp3 = currentSP;
 			nextSP = sp1;
 			currentTask = 1;
 		break;
@@ -153,6 +171,7 @@ int main(void)
 {
 	sp1 = iniStackTask( &stackTask1[ _STACK_SIZE_ - 1 ] , task1 , (void *)0x11223344 );
 	sp2 = iniStackTask( &stackTask2[ _STACK_SIZE_ - 1 ] , task2 , (void *)0x11223344 );
+	sp3 = iniStackTask( &stackTask3[ _STACK_SIZE_ - 1 ] , task3 , (void *)0x11223344 );
 
 	millis = 0;
 
