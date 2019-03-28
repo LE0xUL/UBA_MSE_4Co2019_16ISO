@@ -58,6 +58,7 @@ static void initHardware(void)
 	Board_Init();
 	SystemCoreClockUpdate();
 	SysTick_Config(SystemCoreClock / 1000);			// Se fija a 1mS
+	NVIC_SetPriority(PendSV_IRQn , (1 << __NVIC_PRIO_BITS) - 1 );
 }
 
 void taskVoid()
@@ -67,6 +68,18 @@ void taskVoid()
 	{
 		__WFI();
 	}
+}
+
+void schedule()
+{
+	__ISB();
+	__DSB();
+	SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+}
+
+void SysTick_Handler()
+{
+	schedule();
 }
 
 static uint32_t* iniStackTask( uint32_t *stack , taskFunction_t functionName , void *argFunction )

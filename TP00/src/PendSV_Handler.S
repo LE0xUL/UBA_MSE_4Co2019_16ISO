@@ -3,14 +3,14 @@
  */
 	.syntax unified
 	.text
-	.global SysTick_Handler
+	.global PendSV_Handler
 
 	.extern millis
 	.extern	getNextSP
 
 	.thumb_func
 
-SysTick_Handler:
+PendSV_Handler:
 	PUSH	{r4-r11,lr}
 
 	LDR  R1, =millis	// read address of millis into R1
