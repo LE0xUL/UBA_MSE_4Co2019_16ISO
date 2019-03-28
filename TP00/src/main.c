@@ -96,7 +96,8 @@ static uint32_t* iniStackTask( uint32_t *stack , taskFunction_t functionName , v
 void delayMs( uint32_t timeMs )
 {
 	uint32_t timeActual = millis;
-	while( millis - timeActual < timeMs);
+	while( millis - timeActual < timeMs)
+		__WFI();
 }
 
 /*==================[external functions definition]==========================*/
