@@ -2,13 +2,15 @@
  *
  */
 
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef _TRECOS_H_
+#define _TRECOS_H_
 
-/** \addtogroup TP_16ISO_00 Cambio de contexto
+/** \addtogroup TRECOS_H Headers del Sistema Operativo
  ** @{ */
 
 /*==================[inclusions]=============================================*/
+
+#include "trecOS_config.h"
 
 /*==================[cplusplus]==============================================*/
 
@@ -18,34 +20,31 @@ extern "C" {
 
 /*==================[macros]=================================================*/
 
-#define _EDUCIAA_LED_R_		0
-#define _EDUCIAA_LED_G_		1
-#define _EDUCIAA_LED_B_		2
-#define _EDUCIAA_LED_1_		3
-#define _EDUCIAA_LED_2_		4
-#define _EDUCIAA_LED_3_		5
-
-/** delay in milliseconds */
-#define _DELAY_T1_ 100
-#define _DELAY_T2_ 500
-#define _DELAY_T3_ 1000
-
-/** led number to toggle */
-#define _LED_T1_ 	_EDUCIAA_LED_1_
-#define _LED_T2_ 	_EDUCIAA_LED_2_
-#define _LED_T3_ 	_EDUCIAA_LED_3_
-
 /*==================[typedef]================================================*/
 
+typedef void* (*taskFunction_t)( void*);		// Prototipo de tareas del SO
 
 /*==================[external data declaration]==============================*/
 
 /*==================[external functions declaration]=========================*/
 
-/** @brief main function
- * @return main function should never return
+void 		vTosIniOs ( void );
+void 		delayMs( uint32_t timeMs );
+
+/*==================[internal functions declaration]=========================*/
+
+/** @brief Inicializa pila de tarea
+ *	@return puntero de pila
  */
-int main(void);
+uint32_t* 	iniStackTask( uint32_t *stack , taskFunction_t functionName , void *argFunction );
+
+void 		schedule( void );
+
+void 		taskVoid( void );
+
+void 		SysTick_Handler( void );
+
+uint32_t*	getNextSP( uint32_t *currentSP );
 
 /*==================[cplusplus]==============================================*/
 
@@ -55,4 +54,4 @@ int main(void);
 
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/
-#endif /* #ifndef _MAIN_H_ */
+#endif /* #ifndef _TRECOS_H_ */
