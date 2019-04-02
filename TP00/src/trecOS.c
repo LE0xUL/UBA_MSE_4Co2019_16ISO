@@ -125,16 +125,20 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 			taskStatus[ tosData.indexCurrentTask ].state = _TOS_TASK_STATE_READY_;
 	}
 
-	// Busca una tarea en estado ready
-	for( uint8_t i = _TOS_IDLE_TASK_ID_INDEX_ + 1 ; i < _TOS_MAX_TASK_ ; i++ )
+	// Busca la siguiente tarea en READY por orden de prioridad
+	for( int pry = _TOS_TASK_PRIORITY_0_ ; pry <= _TOS_TASK_PRIORITY_IDLE_ ; pry++)
 	{
-		if( taskStatus[ i ].state == _TOS_TASK_STATE_READY_ )
+		for( int idx = _TOS_IDLE_TASK_ID_INDEX_ ; idx < _TOS_MAX_TASK_ ; idx++ )
 		{
-			tosData.indexCurrentTask = i;
-			nextSP = taskData[ i ].pStack;
-			tosData.idCurrentTask = taskData[ i ].id;
-			taskStatus[ i ].state = _TOS_TASK_STATE_RUN_;
-			return nextSP;
+			if( taskStatus[ idx ].state == _TOS_TASK_STATE_READY_ &&
+				taskStatus[ idx ].priority == pry )
+			{
+				tosData.indexCurrentTask = idx;
+				nextSP = taskData[ idx ].pStack;
+				tosData.idCurrentTask = taskData[ idx ].id;
+				taskStatus[ idx ].state = _TOS_TASK_STATE_RUN_;
+				return nextSP;
+			}
 		}
 	}
 
