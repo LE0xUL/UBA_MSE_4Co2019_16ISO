@@ -24,32 +24,27 @@ static struct
 	uint8_t		indexCurrentTask;
 }tosData;
 
-// uint32_t		millis;
-
 /*==================[internal functions declaration]=========================*/
 /** @brief Inicializa pila de tarea
  *	@return puntero de pila
  */
-static 		uint32_t* 	iniStackTask( uint32_t *stack , taskFunction_t functionName , void *argFunction );
-static		void 		schedule( void );
+static 	uint32_t* 	iniStackTask	( uint32_t *stack , taskFunction_t functionName , void *argFunction );
+static	void 		schedule 		( void );
+static 	void* 		idleTask 		( void* );
 
-static 		void* 		idleTask( void* );
-
-	 		void 		SysTick_Handler( void );
 
 /*==================[internal data definition]===============================*/
 
-static taskStatus_t		taskStatus[ _TOS_MAX_TASK_ ];
-static taskData_t		taskData[ _TOS_MAX_TASK_ ];
+static 	taskStatus_t		taskStatus[ _TOS_MAX_TASK_ ];
+static 	taskData_t		taskData[ _TOS_MAX_TASK_ ];
 
 static	uint32_t		stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ ];
-// static	uint32_t*		spIdleTask;
-// static	uint32_t		idleTaskID;
 
 /*==================[external data definition]===============================*/
 
 /*==================[external functions declaration]=========================*/
 
+void 		SysTick_Handler		( void );
 uint32_t*	getNextSP			( uint32_t *currentSP );
 
 
@@ -57,22 +52,16 @@ uint32_t*	getNextSP			( uint32_t *currentSP );
 
 void* idleTask( void *arg )
 {
-	// Board_LED_Set( _EDUCIAA_LED_R_ , TRUE );
 	while( 1 )
-	{
 		__WFI();
-	}
 
 	return 0;
 }
 
 void taskReturn()
 {
-	// Board_LED_Set( _EDUCIAA_LED_R_ , TRUE );
 	while( 1 )
-	{
 		__WFI();
-	}
 }
 
 void schedule()
@@ -84,15 +73,10 @@ void schedule()
 
 void SysTick_Handler()
 {
-	// millis++;
 	// Escanea las tareas en estado wait
 	for( uint8_t i = 0 ; i < _TOS_MAX_TASK_ ; i++ )
-	{
 		if( taskStatus[ i ].state == _TOS_TASK_STATE_WAIT_ && --taskData[ i ].delayTime == 0)
-		{
 			taskStatus[ i ].state 	= _TOS_TASK_STATE_READY_;
-		}
-	}
 
 	schedule();
 }
@@ -133,7 +117,7 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 {
 	uint32_t *nextSP;
 
-	// Guardo El contexto y actualiza estado de ser necesario
+	// De ser necesario guarda el contexto y actualiza estado
 	if( _TOS_NULL_ID_TASK_VALUE_ != tosData.idCurrentTask )
 	{
 		taskData[ tosData.indexCurrentTask ].pStack = currentSP;
@@ -159,32 +143,6 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 	tosData.idCurrentTask = _TOS_IDLE_TASK_ID_INDEX_;
 	tosData.indexCurrentTask = _TOS_IDLE_TASK_ID_INDEX_;
 	taskStatus[ _TOS_IDLE_TASK_ID_INDEX_ ].state = _TOS_TASK_STATE_RUN_;
-
-	// if( ++tosData.indexCurrentTask == _TOS_MAX_TASK_ )
-	// 	tosData.indexCurrentTask = 0;
-
-	// nextSP = taskData[ tosData.indexCurrentTask ].pStack;
-
-	// tosData.idCurrentTask = taskData[ tosData.indexCurrentTask ].id;
-
-	// switch( currentTask )
-	// {
-	// 	case 0:
-	// 		nextSP = pTosArrSP[ 0 ];
-	// 		currentTask = 1;
-	// 	break;
-
-	// 	case _TOS_NUM_TASK_:
-	// 		pTosArrSP[ _TOS_NUM_TASK_ - 1 ] = currentSP;
-	// 		nextSP = pTosArrSP[ 0 ];
-	// 		currentTask = 1;
-	// 	break;
-
-	// 	default:
-	// 		pTosArrSP[ currentTask - 1 ] = currentSP;
-	// 		nextSP = pTosArrSP[ currentTask ];
-	// 		currentTask++;
-	// }
 
 	return nextSP;
 }
@@ -218,9 +176,6 @@ void 		tosDelayMs_v		( uint32_t timeMs )
 	{
 		taskStatus[ tosData.indexCurrentTask ].state 	= _TOS_TASK_STATE_WAIT_;
 		taskData[ tosData.indexCurrentTask ].delayTime 	= timeMs;
-		// uint32_t timeActual = millis;
-		// while( millis - timeActual < timeMs)
-		// 	__WFI();
 		schedule();
 	}
 }
@@ -228,7 +183,6 @@ void 		tosDelayMs_v		( uint32_t timeMs )
 
 void 		tosIniOs_v 			( void )
 {
-	// millis	= 0;
 	tosAddTask_ui32( &stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ - 1 ] , idleTask , 0 , _TOS_TASK_PRIORITY_IDLE_ );
 }
 
@@ -238,7 +192,6 @@ void 		tosIniSchedule_v	( void )
 	NVIC_SetPriority(PendSV_IRQn , (1 << __NVIC_PRIO_BITS) - 1 );
 	tosData.idCurrentTask	= _TOS_NULL_ID_TASK_VALUE_;
 	schedule();
-	// idleTask( 0 );
 }
 
 

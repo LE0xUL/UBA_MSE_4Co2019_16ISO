@@ -8,7 +8,7 @@
 /** \addtogroup TRECOS_CONFIG_H Configuraciones del Sistema Operativo
  ** @{ */
 
-#define _TOS_MAX_USER_TASK_		3			// Numero Máximo de tareas del usuario
+#define _TOS_MAX_USER_TASK_		5			// Numero Máximo de tareas concurrentes del usuario
 
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/

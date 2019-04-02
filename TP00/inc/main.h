@@ -33,7 +33,7 @@ extern "C" {
 /** led number to toggle */
 #define _LED_T1_ 	_EDUCIAA_LED_1_
 #define _LED_T2_ 	_EDUCIAA_LED_2_
-#define _LED_T3_ 	_EDUCIAA_LED_G_
+#define _LED_T3_ 	_EDUCIAA_LED_3_
 
 /*==================[typedef]================================================*/
 

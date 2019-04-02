@@ -31,7 +31,6 @@ volatile uint32_t millis;
  */
 static void initHardware( void );
 
-
 /*==================[internal data definition]===============================*/
 
 
@@ -40,10 +39,6 @@ static void initHardware( void );
 uint32_t	stackTask1[ _DEFAULT_STACK_SIZE_ ];
 uint32_t	stackTask2[ _DEFAULT_STACK_SIZE_ ];
 uint32_t	stackTask3[ _DEFAULT_STACK_SIZE_ ];
-
-uint32_t	*sp1;
-uint32_t	*sp2;
-uint32_t	*sp3;
 
 /*==================[internal functions definition]==========================*/
 

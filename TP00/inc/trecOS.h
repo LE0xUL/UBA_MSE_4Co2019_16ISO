@@ -20,7 +20,6 @@ extern "C" {
 
 /*==================[macros]=================================================*/
 
-// #define _TOS_MAX_ID_TASK_VALUE_			0xFFFFFFFE
 #define _TOS_NULL_ID_TASK_VALUE_		0xFFFFFFFF
 #define _TOS_MAX_TASK_ 					_TOS_MAX_USER_TASK_ + 1			// Numero Máximo de tareas del SO
 #define _TOS_IDLE_TASK_ID_INDEX_		0
@@ -33,10 +32,10 @@ typedef void* (*taskFunction_t)( void*);		// Prototipo de tareas del SO
 
 /** prioridades */
 typedef enum taskPriority_t {
-	_TOS_TASK_PRIORITY_0_,
+	_TOS_TASK_PRIORITY_0_,						// Alta Prioridad
 	_TOS_TASK_PRIORITY_1_,
 	_TOS_TASK_PRIORITY_2_,
-	_TOS_TASK_PRIORITY_IDLE_
+	_TOS_TASK_PRIORITY_IDLE_					// Baja Prioridad
 }taskPriority_t;
 
 /** Estados de una tarea */
