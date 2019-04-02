@@ -20,8 +20,12 @@ extern "C" {
 
 /*==================[macros]=================================================*/
 
-#define  _TOS_MAX_ID_TASK_VALUE_		0xFFFFFFFF
-#define  _TOS_ID_IDLE_TASK_				0
+// #define _TOS_MAX_ID_TASK_VALUE_			0xFFFFFFFE
+#define _TOS_NULL_ID_TASK_VALUE_		0xFFFFFFFF
+#define _TOS_MAX_TASK_ 					_TOS_MAX_USER_TASK_ + 1			// Numero Máximo de tareas del SO
+#define _TOS_IDLE_TASK_ID_INDEX_		0
+#define _TOS_IDLE_TASK_STACK_SIZE_		64
+
 
 /*==================[typedef]================================================*/
 
@@ -32,7 +36,7 @@ typedef enum taskPriority_t {
 	_TOS_TASK_PRIORITY_0_,
 	_TOS_TASK_PRIORITY_1_,
 	_TOS_TASK_PRIORITY_2_,
-	_TOS_TASK_PRIORITY_3_,
+	_TOS_TASK_PRIORITY_IDLE_
 }taskPriority_t;
 
 /** Estados de una tarea */
@@ -61,24 +65,10 @@ typedef struct taskData_t {
 /*==================[external functions declaration]=========================*/
 
 void 		tosIniOs_v 			( void );
+void 		tosIniSchedule_v	( void );
+void 		tosDelayMs_v		( uint32_t timeMs );
 uint32_t	tosAddTask_ui32		( uint32_t *pStack , taskFunction_t functionName , void *argFunction , taskPriority_t priority);
 
-/*==================[internal functions declaration]=========================*/
-
-/** @brief Inicializa pila de tarea
- *	@return puntero de pila
- */
-// uint32_t* 	iniStackTask( uint32_t *stack , taskFunction_t functionName , void *argFunction );
-
-void 		schedule( void );
-
-void 		taskVoid( void );
-
-void 		SysTick_Handler( void );
-
-uint32_t*	getNextSP( uint32_t *currentSP );
-
-void 		delayMs( uint32_t timeMs );
 /*==================[cplusplus]==============================================*/
 
 #ifdef __cplusplus
