@@ -129,14 +129,11 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 	// Busca la siguiente tarea en READY por orden de prioridad
 	for( int pry = _TOS_TASK_PRIORITY_0_ ; pry <= _TOS_TASK_PRIORITY_IDLE_ ; pry++ )
 	{
-		// int idx = roundRobinControl[ pry ] + 1 == _TOS_MAX_TASK_ ? _TOS_IDLE_TASK_ID_INDEX_ : roundRobinControl[ pry ] + 1 ;
-		int idx = roundRobinControl[ pry ] + 1 ;
-		if ( idx == _TOS_MAX_TASK_ )
-			idx = _TOS_IDLE_TASK_ID_INDEX_ ;
-
+		int idx = roundRobinControl[ pry ] + 1 == _TOS_MAX_TASK_ ? _TOS_IDLE_TASK_ID_INDEX_ : roundRobinControl[ pry ] + 1 ;
 		int endIndex = idx;
 
-		do {
+		do
+		{
 			if( taskStatus[ idx ].state == _TOS_TASK_STATE_READY_ &&
 				taskStatus[ idx ].priority == pry )
 			{
@@ -148,26 +145,9 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 				return nextSP;
 			}
 
-			if ( ++idx == _TOS_MAX_TASK_ )
-				idx = _TOS_IDLE_TASK_ID_INDEX_ ;
+			idx = ++idx == _TOS_MAX_TASK_ ? _TOS_IDLE_TASK_ID_INDEX_ : idx ;
 		} while ( idx != endIndex);
 	}
-
-	// for( int pry = _TOS_TASK_PRIORITY_0_ ; pry <= _TOS_TASK_PRIORITY_IDLE_ ; pry++ )
-	// {
-	// 	for( int idx = _TOS_IDLE_TASK_ID_INDEX_ ; idx < _TOS_MAX_TASK_ ; idx++ )
-	// 	{
-	// 		if( taskStatus[ idx ].state == _TOS_TASK_STATE_READY_ &&
-	// 			taskStatus[ idx ].priority == pry )
-	// 		{
-	// 			tosData.indexCurrentTask = idx;
-	// 			nextSP = taskData[ idx ].pStack;
-	// 			tosData.idCurrentTask = taskData[ idx ].id;
-	// 			taskStatus[ idx ].state = _TOS_TASK_STATE_RUN_;
-	// 			return nextSP;
-	// 		}
-	// 	}
-	// }
 
 	// Si no encuentra tarea, ejecuta la IdleTask (En teoria esto nunca se debe ejecutar pero se deja por seguridad)
 	nextSP 											= taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].pStack;
