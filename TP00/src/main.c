@@ -86,9 +86,9 @@ int main(void)
 
 	tosIniOs_v();
 
-	tosAddTask_ui32( &stackTask1[ _DEFAULT_STACK_SIZE_ - 1 ] , task1 , (void *)0x11223344 , _TOS_TASK_PRIORITY_0_);
+	tosAddTask_ui32( &stackTask1[ _DEFAULT_STACK_SIZE_ - 1 ] , task1 , (void *)0x11223344 , _TOS_TASK_PRIORITY_2_);
 	tosAddTask_ui32( &stackTask2[ _DEFAULT_STACK_SIZE_ - 1 ] , task2 , (void *)0x11223344 , _TOS_TASK_PRIORITY_1_);
-	tosAddTask_ui32( &stackTask3[ _DEFAULT_STACK_SIZE_ - 1 ] , task3 , (void *)0x11223344 , _TOS_TASK_PRIORITY_2_);
+	tosAddTask_ui32( &stackTask3[ _DEFAULT_STACK_SIZE_ - 1 ] , task3 , (void *)0x11223344 , _TOS_TASK_PRIORITY_0_);
 
 	tosIniSchedule_v();
 
