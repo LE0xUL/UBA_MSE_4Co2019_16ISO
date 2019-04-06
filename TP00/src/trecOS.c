@@ -181,6 +181,20 @@ uint32_t	tosAddTask_ui32		( uint32_t *pStack , taskFunction_t functionName , voi
 	return 0;		// Si no encuentra un slot disponible retorna 0
 }
 
+uint8_t		tosTaskDelete_ui8	( uint32_t idTask )
+{
+	for( uint8_t i = 1 ; i < _TOS_MAX_TASK_ ; i++)
+	{
+		if( idTask == taskData[ i ].id )
+		{
+			taskStatus[ i ].state = _TOS_TASK_STATE_VOID_;
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
 void 		tosDelayMs_v		( uint32_t timeMs )
 {
 	if( timeMs )
