@@ -29,9 +29,9 @@ static struct
  *	@return puntero de pila
  */
 static 	uint32_t* 	iniStackTask	( uint32_t *stack , taskFunction_t functionName , void *argFunction );
-static	void 		schedule 		( void );
+static	void 		iniIdleTask		( void );
+static	void 		callSchedule	( void );
 static 	void* 		idleTask 		( void* );
-
 
 /*==================[internal data definition]===============================*/
 
@@ -65,7 +65,7 @@ void taskReturn()
 		__WFI();
 }
 
-void schedule()
+void callSchedule()
 {
 	__ISB();
 	__DSB();
@@ -79,7 +79,7 @@ void SysTick_Handler()
 		if( taskStatus[ i ].state == _TOS_TASK_STATE_WAIT_ && --taskData[ i ].delayTime == 0 )
 			taskStatus[ i ].state 	= _TOS_TASK_STATE_READY_;
 
-	schedule();
+	callSchedule();
 }
 
 uint32_t* iniStackTask( uint32_t *pStack , taskFunction_t functionName , void *argFunction )
@@ -108,6 +108,13 @@ uint32_t* iniStackTask( uint32_t *pStack , taskFunction_t functionName , void *a
 	return pStack;
 }
 
+void 		iniIdleTask 			( void )
+{
+	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].id 		= _TOS_IDLE_TASK_ID_INDEX_;
+	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].pStack 	= iniStackTask( &stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ - 1 ] , idleTask , 0 );
+	taskStatus[ _TOS_IDLE_TASK_ID_INDEX_ ].state 	= _TOS_TASK_STATE_READY_;
+	taskStatus[ _TOS_IDLE_TASK_ID_INDEX_ ].priority = _TOS_TASK_PRIORITY_IDLE_;
+}
 
 /*===========================================================================*/
 /*==================[external functions definition]==========================*/
@@ -161,7 +168,7 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 // Retorna id de la tarea creada o 0 si no pudo crearla.
 uint32_t	tosAddTask_ui32		( uint32_t *pStack , taskFunction_t functionName , void *argFunction , taskPriority_t priority)
 {
-	for( uint8_t i = 0 ; i < _TOS_MAX_TASK_ ; i++)
+	for( uint8_t i = 1 ; i < _TOS_MAX_TASK_ ; i++)
 	{
 		if( taskStatus[ i ].state == _TOS_TASK_STATE_VOID_ )
 		{
@@ -201,22 +208,17 @@ void 		tosDelayMs_v		( uint32_t timeMs )
 	{
 		taskStatus[ tosData.indexCurrentTask ].state 	= _TOS_TASK_STATE_WAIT_;
 		taskData[ tosData.indexCurrentTask ].delayTime 	= timeMs;
-		schedule();
+		callSchedule();
 	}
-}
-
-
-void 		tosIniOs_v 			( void )
-{
-	tosAddTask_ui32( &stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ - 1 ] , idleTask , 0 , _TOS_TASK_PRIORITY_IDLE_ );
 }
 
 void 		tosIniSchedule_v	( void )
 {
 	SysTick_Config(SystemCoreClock / 1000);			// Se fija a 1mS
 	NVIC_SetPriority(PendSV_IRQn , (1 << __NVIC_PRIO_BITS) - 1 );
+	iniIdleTask();
 	tosData.idCurrentTask	= _TOS_NULL_ID_TASK_VALUE_;
-	schedule();
+	callSchedule();
 }
 
 
