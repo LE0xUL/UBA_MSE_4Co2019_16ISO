@@ -9,6 +9,7 @@
  ** @{ */
 
 #define _TOS_MAX_USER_TASK_		5			// Numero Máximo de tareas concurrentes del usuario
+#define _TOS_MAX_USER_SEMPHR_	5			// Numero Máximo de semaforos del usuario
 
 /** @} doxygen end group definition */
 /*==================[end of file]============================================*/

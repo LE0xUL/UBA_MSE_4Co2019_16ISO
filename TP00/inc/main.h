@@ -29,11 +29,13 @@ extern "C" {
 #define _DELAY_T1_ 80
 #define _DELAY_T2_ 500
 #define _DELAY_T3_ 1000
+#define _DELAY_T4_ 500
 
 /** led number to toggle */
 #define _LED_T1_ 	_EDUCIAA_LED_1_
 #define _LED_T2_ 	_EDUCIAA_LED_2_
 #define _LED_T3_ 	_EDUCIAA_LED_3_
+#define _LED_T4_ 	_EDUCIAA_LED_B_
 
 /*==================[typedef]================================================*/
 
