@@ -35,7 +35,6 @@ static 	void* 		idleTask 		( void* );
 
 /*==================[internal data definition]===============================*/
 
-static 	taskStatus_t	taskStatus[ _TOS_MAX_TASK_ ];
 static 	taskData_t		taskData[ _TOS_MAX_TASK_ ];
 
 static	uint32_t		stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ ];
@@ -76,8 +75,8 @@ void SysTick_Handler()
 {
 	// Escanea las tareas en estado wait
 	for( uint8_t i = 0 ; i < _TOS_MAX_TASK_ ; i++ )
-		if( taskStatus[ i ].state == _TOS_TASK_STATE_WAIT_ && --taskData[ i ].delayTime == 0 )
-			taskStatus[ i ].state 	= _TOS_TASK_STATE_READY_;
+		if( taskData[ i ].state == _TOS_TASK_STATE_WAIT_ && --taskData[ i ].delayTime == 0 )
+			taskData[ i ].state = _TOS_TASK_STATE_READY_;
 
 	callSchedule();
 }
@@ -112,8 +111,8 @@ void 		iniIdleTask 			( void )
 {
 	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].id 		= _TOS_IDLE_TASK_ID_INDEX_;
 	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].pStack 	= iniStackTask( &stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ - 1 ] , idleTask , 0 );
-	taskStatus[ _TOS_IDLE_TASK_ID_INDEX_ ].state 	= _TOS_TASK_STATE_READY_;
-	taskStatus[ _TOS_IDLE_TASK_ID_INDEX_ ].priority = _TOS_TASK_PRIORITY_IDLE_;
+	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].state 	= _TOS_TASK_STATE_READY_;
+	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].priority = _TOS_TASK_PRIORITY_IDLE_;
 }
 
 /*===========================================================================*/
@@ -129,8 +128,8 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 	if( _TOS_NULL_ID_TASK_VALUE_ != tosData.idCurrentTask )
 	{
 		taskData[ tosData.indexCurrentTask ].pStack = currentSP;
-		if( _TOS_TASK_STATE_RUN_ == taskStatus[ tosData.indexCurrentTask ].state )
-			taskStatus[ tosData.indexCurrentTask ].state = _TOS_TASK_STATE_READY_;
+		if( _TOS_TASK_STATE_RUN_ == taskData[ tosData.indexCurrentTask ].state )
+			taskData[ tosData.indexCurrentTask ].state = _TOS_TASK_STATE_READY_;
 	}
 
 	// Busca la siguiente tarea en READY por orden de prioridad
@@ -141,13 +140,13 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 
 		do
 		{
-			if( taskStatus[ idx ].state == _TOS_TASK_STATE_READY_ &&
-				taskStatus[ idx ].priority == pry )
+			if( taskData[ idx ].state == _TOS_TASK_STATE_READY_ &&
+				taskData[ idx ].priority == pry )
 			{
 				tosData.indexCurrentTask = idx;
 				nextSP = taskData[ idx ].pStack;
 				tosData.idCurrentTask = taskData[ idx ].id;
-				taskStatus[ idx ].state = _TOS_TASK_STATE_RUN_;
+				taskData[ idx ].state = _TOS_TASK_STATE_RUN_;
 				roundRobinControl[ pry ] = idx;
 				return nextSP;
 			}
@@ -160,7 +159,7 @@ uint32_t*	getNextSP( uint32_t *currentSP )
 	nextSP 											= taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].pStack;
 	tosData.idCurrentTask 							= _TOS_IDLE_TASK_ID_INDEX_;
 	tosData.indexCurrentTask 						= _TOS_IDLE_TASK_ID_INDEX_;
-	taskStatus[ _TOS_IDLE_TASK_ID_INDEX_ ].state 	= _TOS_TASK_STATE_RUN_;
+	taskData[ _TOS_IDLE_TASK_ID_INDEX_ ].state 	= _TOS_TASK_STATE_RUN_;
 
 	return nextSP;
 }
@@ -170,7 +169,7 @@ uint32_t	tosAddTask_ui32		( uint32_t *pStack , taskFunction_t functionName , voi
 {
 	for( uint8_t i = 1 ; i < _TOS_MAX_TASK_ ; i++)
 	{
-		if( taskStatus[ i ].state == _TOS_TASK_STATE_VOID_ )
+		if( taskData[ i ].state == _TOS_TASK_STATE_VOID_ )
 		{
 			if ( tosData.contadorID != _TOS_NULL_ID_TASK_VALUE_ )
 				taskData[ i ].id = tosData.contadorID++;
@@ -179,8 +178,8 @@ uint32_t	tosAddTask_ui32		( uint32_t *pStack , taskFunction_t functionName , voi
 
 			taskData[ i ].pStack = iniStackTask( pStack , functionName , argFunction );
 
-			taskStatus[ i ].state = _TOS_TASK_STATE_READY_;
-			taskStatus[ i ].priority = priority;
+			taskData[ i ].state = _TOS_TASK_STATE_READY_;
+			taskData[ i ].priority = priority;
 
 			return taskData[ i ].id;
 		}
@@ -194,7 +193,7 @@ uint8_t		tosTaskDelete_ui8	( uint32_t idTask )
 	{
 		if( idTask == taskData[ i ].id )
 		{
-			taskStatus[ i ].state = _TOS_TASK_STATE_VOID_;
+			taskData[ i ].state = _TOS_TASK_STATE_VOID_;
 			return 1;
 		}
 	}
@@ -206,7 +205,7 @@ void 		tosDelayMs_v		( uint32_t timeMs )
 {
 	if( timeMs )
 	{
-		taskStatus[ tosData.indexCurrentTask ].state 	= _TOS_TASK_STATE_WAIT_;
+		taskData[ tosData.indexCurrentTask ].state 	= _TOS_TASK_STATE_WAIT_;
 		taskData[ tosData.indexCurrentTask ].delayTime 	= timeMs;
 		callSchedule();
 	}

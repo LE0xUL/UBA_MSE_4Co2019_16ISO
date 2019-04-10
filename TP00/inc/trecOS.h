@@ -48,15 +48,12 @@ typedef enum taskState_t {
 }taskState_t;
 
 /** estructura de definicón de tareas */
-typedef struct taskStatus_t {
-	taskState_t		state		:3		;
-	taskPriority_t	priority	:2		;			// 4 niveles de prioridad 0: Alta 3: Baja
-}taskStatus_t;
-
 typedef struct taskData_t {
-				uint32_t	id			;
-				uint32_t*	pStack		;
-	volatile	uint32_t	delayTime	;			// En ticks (ms)
+				taskState_t		state		;
+				taskPriority_t	priority	;			// 4 niveles de prioridad 0: Alta 3: Baja
+				uint32_t		id			;
+				uint32_t*		pStack		;
+	volatile	uint32_t		delayTime	;			// En ticks (ms)
 }taskData_t;
 
 /*==================[external data declaration]==============================*/
