@@ -22,7 +22,7 @@
 
 /*==================[internal data declaration]==============================*/
 
-volatile uint32_t millis;
+uint32_t ticksDelay;
 
 semaphoreHandle_t 	semaforoBinario;
 
@@ -69,11 +69,18 @@ void* 		task2( void *arg )
 	{
 		// Board_LED_Toggle(_LED_T2_);
 		// tosDelayMs_v( _DELAY_T2_ );
+		uint32_t duracionTeclaPresionada;
+		uint32_t ticsIni;
+		uint32_t ticsFin;
 		if( Buttons_GetStatus() )
 		{
+			ticsIni = tosGetTicks();
 			Board_LED_Set(_LED_T2_ , 1 );
-			tosSemaphoreGive( semaforoBinario );
 			while( Buttons_GetStatus() );
+			ticsFin = tosGetTicks();
+			duracionTeclaPresionada = ticsFin - ticsIni;
+			ticksDelay = duracionTeclaPresionada;
+			tosSemaphoreGive( semaforoBinario );
 		}
 		else
 			Board_LED_Set(_LED_T2_ , 0 );
@@ -103,14 +110,11 @@ void* 		task4( void *arg )
 	while (1)
 	{
 		// Board_LED_Set(_EDUCIAA_LED_R_ , 1 );
-
-		if( _TOS_SEMPHR_FREE_ == tosSemaphoreTake( semaforoBinario ) )
-		{
-			Board_LED_Toggle(_LED_T4_);
-			tosDelayMs_v( _DELAY_T4_ );
-			Board_LED_Toggle(_LED_T4_);
-			tosDelayMs_v( _DELAY_T4_ );
-		}
+		tosSemaphoreTake( semaforoBinario );
+		Board_LED_Toggle(_LED_T4_);
+		tosDelayMs_v( ticksDelay );
+		Board_LED_Toggle(_LED_T4_);
+		tosDelayMs_v( ticksDelay );
 	}
 	return 0;
 }

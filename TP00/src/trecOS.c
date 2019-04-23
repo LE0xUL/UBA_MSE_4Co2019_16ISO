@@ -44,6 +44,7 @@ static 	semphrData_t	semphrData[ _TOS_MAX_USER_SEMPHR_ ];
 static	uint32_t		stackIdleTask[ _TOS_IDLE_TASK_STACK_SIZE_ ];
 static	uint8_t			roundRobinControl[ _TOS_TASK_PRIORITY_IDLE_ + 1 ];		// Almacena el index de la ultima tarea ejecutada por cada nivel de prioridad
 
+volatile static	uint32_t ticksCount;
 /*==================[external data definition]===============================*/
 
 /*==================[external functions declaration]=========================*/
@@ -77,6 +78,7 @@ void callSchedule()
 
 void SysTick_Handler()
 {
+	ticksCount++;
 	// Escanea las tareas en estado wait
 	for( uint8_t i = 0 ; i < _TOS_MAX_TASK_ ; i++ )
 		if( taskData[ i ].state == _TOS_TASK_STATE_WAIT_
@@ -277,6 +279,11 @@ void 		tosIniSchedule_v	( void )
 	callSchedule();
 }
 
+uint32_t 	tosGetTicks			()
+{
+	return ticksCount;
+}
+
 semaphoreHandle_t	tosSemaphoreNewBin( void )
 {
 	for( uint8_t i = 0 ; i < _TOS_MAX_USER_SEMPHR_ ; i++)
@@ -295,18 +302,17 @@ semaphoreHandle_t	tosSemaphoreNewBin( void )
 	return 0;		// Si no encuentra un slot disponible retorna 0
 }
 
-semphrState_t		tosSemaphoreTake( semaphoreHandle_t ids )
+void		tosSemaphoreTake( semaphoreHandle_t ids )
 {
 	if( _TOS_SEMPHR_FREE_ == semphrGetState( ids ) )
 	{
 		semphrTake( ids );
-		return _TOS_SEMPHR_FREE_;
 	}
 	else
 	{
 		semphrWaitFree( ids );
+		semphrTake( ids );
 	}
-	return _TOS_SEMPHR_FREE_;
 }
 
 void 			tosSemaphoreGive( semaphoreHandle_t ids )
@@ -314,6 +320,7 @@ void 			tosSemaphoreGive( semaphoreHandle_t ids )
 	for( uint8_t idx = 0 ; idx < _TOS_MAX_USER_SEMPHR_ ; idx++ )
 		if( ids == semphrData[ idx ].id && _TOS_SEMPHR_TAKEN_ == semphrData[ idx ].state )
 		{
+
 			setTaskState( semphrData[ idx ].taskIdWaiting , _TOS_TASK_STATE_READY_ );
 			semphrData[ idx ].state = _TOS_SEMPHR_FREE_;
 			semphrData[ idx ].taskIdWaiting = 0;

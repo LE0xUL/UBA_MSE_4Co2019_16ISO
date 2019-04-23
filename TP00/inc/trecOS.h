@@ -84,9 +84,10 @@ void 		tosIniSchedule_v	( void );
 void 		tosDelayMs_v		( uint32_t timeMs );
 uint32_t	tosAddTask_ui32		( uint32_t *pStack , taskFunction_t functionName , void *argFunction , taskPriority_t priority);
 uint8_t		tosTaskDelete_ui8	( uint32_t idTask );
+uint32_t	tosGetTicks			();
 
 semaphoreHandle_t	tosSemaphoreNewBin	( void );
-semphrState_t		tosSemaphoreTake	( semaphoreHandle_t ids );
+void				tosSemaphoreTake	( semaphoreHandle_t ids );
 void 				tosSemaphoreGive	( semaphoreHandle_t ids );
 
 /*==================[cplusplus]==============================================*/
