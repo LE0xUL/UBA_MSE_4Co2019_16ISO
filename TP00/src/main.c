@@ -13,6 +13,7 @@
 #include "board.h"
 #include "trecOS.h"
 #include "main.h"
+#include "ciaaUART.h"
 
 /*==================[macros and definitions]=================================*/
 
@@ -49,6 +50,7 @@ static void initHardware(void)
 {
 	Board_Init();
 	SystemCoreClockUpdate();
+	ciaaUARTInit();
 }
 
 /*==================[external functions definition]==========================*/
@@ -72,11 +74,13 @@ void* 		task2( void *arg )
 		uint32_t duracionTeclaPresionada;
 		uint32_t ticsIni;
 		uint32_t ticsFin;
-		if( Buttons_GetStatus() )
+		uint8_t	 stdTeclas = (uint8_t)Buttons_GetStatus();
+		if( tec2Press() )
 		{
 			ticsIni = tosGetTicks();
+			// uartSend( CIAA_UART_USB , &stdTeclas , 1 );
 			Board_LED_Set(_LED_T2_ , 1 );
-			while( Buttons_GetStatus() );
+			while( tec2Press() );
 			ticsFin = tosGetTicks();
 			duracionTeclaPresionada = ticsFin - ticsIni;
 			ticksDelay = duracionTeclaPresionada;
@@ -107,10 +111,12 @@ void* 		task3( void *arg )
 
 void* 		task4( void *arg )
 {
+	uint8_t dato = 0x39;
 	while (1)
 	{
 		// Board_LED_Set(_EDUCIAA_LED_R_ , 1 );
 		tosSemaphoreTake( semaforoBinario );
+		uartSendChar( dato );
 		Board_LED_Toggle(_LED_T4_);
 		tosDelayMs_v( ticksDelay );
 		Board_LED_Toggle(_LED_T4_);
