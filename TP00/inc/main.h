@@ -20,10 +20,14 @@ extern "C" {
 
 /** UART USB de la CIAA */
 // #define uartSendChar(x)   uartSend(1, (uint8_t *)(x), 1)
-#define uartSendChar(x)   		uartSend( _CIAA_UART_USB_ , (uint8_t *)(&x) 	, 1 		)
+#define uartSendChar(x)   		uartSend( _CIAA_UART_USB_ , (uint8_t *)(&x) , 1 		)
 #define uartSendString(x)   	uartSend( _CIAA_UART_USB_ , (uint8_t *)(x)	, strlen(x)	)
 #define uartSendStruct(x)   	uartSend( _CIAA_UART_USB_ , (uint8_t *)(x)	, sizeof(x) )
 #define uartSendBuffer(x , len) uartSend( _CIAA_UART_USB_ , (uint8_t *)(x)	, len 		)
+
+#define uartSendMS() 			uartSendString( " ms\n\t" )
+void 	uartSendInt(uint32_t x);
+
 
 /** LEDS de la EDU-CIAA */
 #define _EDUCIAA_LED_R_		0
@@ -39,10 +43,12 @@ extern "C" {
 #define _EDUCIAA_TEC_3_		0b0100
 #define _EDUCIAA_TEC_4_		0b1000
 
-#define tec1Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_1_ ) ? 1 : 0
-#define tec2Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_2_ ) ? 1 : 0
-#define tec3Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_3_ ) ? 1 : 0
-#define tec4Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_4_ ) ? 1 : 0
+#define tec1Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_1_ 	) ? 1 : 0
+#define tec2Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_2_ 	) ? 1 : 0
+#define tec3Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_3_ 	) ? 1 : 0
+#define tec4Press() 		( (uint8_t)Buttons_GetStatus() &  _EDUCIAA_TEC_4_ 	) ? 1 : 0
+#define tecXPress( x ) 		( (uint8_t)Buttons_GetStatus() &  x 				) ? 1 : 0
+
 
 /** delay in milliseconds */
 #define _DELAY_T1_ 80

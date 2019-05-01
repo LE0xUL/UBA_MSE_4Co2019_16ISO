@@ -279,7 +279,7 @@ void 		tosIniSchedule_v	( void )
 	callSchedule();
 }
 
-uint32_t 	tosGetTicks			()
+uint32_t 	tosGetTicks_ui32	()
 {
 	return ticksCount;
 }
@@ -324,6 +324,7 @@ void 			tosSemaphoreGive( semaphoreHandle_t ids )
 			setTaskState( semphrData[ idx ].taskIdWaiting , _TOS_TASK_STATE_READY_ );
 			semphrData[ idx ].state = _TOS_SEMPHR_FREE_;
 			semphrData[ idx ].taskIdWaiting = 0;
+			// callSchedule();
 			return;
 		}
 }
